@@ -11,25 +11,31 @@
     <button onclick="startTracking()">Start Tracking</button>
 
     <div id="status"></div>
+    <div id="loading" style="display: none;">Fetching location...</div> <!-- Loading indicator -->
 
     <script>
         // Function to start tracking the phone's location
         function startTracking() {
+            document.getElementById('loading').style.display = 'block';  // Show loading indicator
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     // Get latitude and longitude from the device
                     var latitude = position.coords.latitude;
                     var longitude = position.coords.longitude;
-                    
+
                     // Show location on the webpage
                     document.getElementById('status').innerHTML = "Latitude: " + latitude + ", Longitude: " + longitude;
+                    document.getElementById('loading').style.display = 'none';  // Hide loading indicator
 
                     // Send location to the server
                     sendLocationToServer(latitude, longitude);
                 }, function(error) {
+                    document.getElementById('loading').style.display = 'none';  // Hide loading indicator
                     alert("Unable to retrieve location. Error: " + error.message);
                 });
             } else {
+                document.getElementById('loading').style.display = 'none';  // Hide loading indicator
                 alert("Geolocation is not supported by this browser.");
             }
         }
