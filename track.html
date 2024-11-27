@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track My Phone</title>
+</head>
+<body>
+    <h1>Track My Phone Location</h1>
+    <p>Click the button below to start tracking your phone's GPS location:</p>
+    <button onclick="startTracking()">Start Tracking</button>
+
+    <div id="status"></div>
+
+    <script>
+        // Function to start tracking the phone's location
+        function startTracking() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Get latitude and longitude from the device
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+                    
+                    // Show location on the webpage
+                    document.getElementById('status').innerHTML = "Latitude: " + latitude + ", Longitude: " + longitude;
+
+                    // Send location to the server
+                    sendLocationToServer(latitude, longitude);
+                }, function(error) {
+                    alert("Unable to retrieve location. Error: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Function to send the location to the server
+        function sendLocationToServer(latitude, longitude) {
+            fetch('update_location.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Location updated: ", data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
